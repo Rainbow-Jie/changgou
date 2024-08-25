@@ -1,12 +1,19 @@
 package com.changgou.service.goods.service.impl;
 
 
+import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.changgou.goods.pojo.Brand;
+import com.changgou.goods.pojo.Category;
+import com.changgou.goods.pojo.CategoryBrand;
 import com.changgou.service.goods.dao.BrandMapper;
 
+import com.changgou.service.goods.dao.CategoryBrandMapper;
+import com.changgou.service.goods.dao.CategoryMapper;
 import com.changgou.service.goods.service.IBrandService;
 //import com.github.pagehelper.Page;
 //import com.github.pagehelper.PageHelper;
@@ -17,12 +24,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class BrandServiceImpl extends ServiceImpl<BrandMapper,Brand> implements IBrandService {
 
     @Autowired
     private BrandMapper brandMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
+    @Autowired
+    private CategoryBrandMapper categoryBrandMapper;
 
     /**
      * 品牌列表查询
@@ -145,6 +157,29 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper,Brand> implements 
                 .like(searchMap.get("letter") != null && !"".equals(searchMap.get("letter")),Brand::getName,searchMap.get("letter"));
         return brandMapper.selectPage(brandPage,wrapper);
     }
+
+
+    public List<Map> findListByCategoryName(String categoryName){
+        Category category = categoryMapper.selectOne(new LambdaQueryWrapper<Category>().eq(Category::getName, categoryName));
+        if(ObjectUtil.isEmpty(category)){
+            return ListUtil.empty();
+        }
+        int categoryId = category.getId();
+        List<CategoryBrand> categoryBrands = categoryBrandMapper.selectList(new LambdaQueryWrapper<CategoryBrand>().eq(CategoryBrand::getCategoryId, categoryId));
+        if(ObjectUtil.isEmpty(categoryBrands)){
+            return ListUtil.empty();
+        }
+        List<Integer> brandIds = categoryBrands.stream()
+                .map(CategoryBrand::getBrandId)
+                .collect(Collectors.toList());
+        List<Brand> brandList = brandMapper.selectBatchIds(brandIds);
+        List<Map> result = brandList.stream()
+                .map(brand -> Map.of("name",brand.getName(),
+                        "image",brand.getImage()))
+                .collect(Collectors.toList());
+        return result;
+    }
+
 
 
 }

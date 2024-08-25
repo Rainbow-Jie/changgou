@@ -38,7 +38,7 @@ public interface IBrandService extends IService<Brand> {
     /**
      * 品牌列表条件查询
      */
-    List<Brand> list(Map<String,Object> searchMap);
+    List<Brand> list(Map<String, Object> searchMap);
 
     /**
      * 品牌列表分页查询
@@ -50,5 +50,11 @@ public interface IBrandService extends IService<Brand> {
     /**
      * 品牌列表分页+条件查询
      */
-    Page<Brand> findPage(Map<String,Object> searchMap,int page,int size);
+    Page<Brand> findPage(Map<String, Object> searchMap, int page, int size);
+
+    /**
+     * 根据商品分类名称查询品牌列表
+     * categoryName
+     */
+    public List<Map> findListByCategoryName(String categoryName);
 }
