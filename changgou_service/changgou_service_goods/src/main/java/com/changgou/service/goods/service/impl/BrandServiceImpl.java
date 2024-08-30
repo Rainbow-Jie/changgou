@@ -117,7 +117,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper,Brand> implements 
 //        List<Brand> brandList = brandMapper.selectByExample(example);
         LambdaQueryWrapper<Brand> wrapper = new LambdaQueryWrapper<Brand>();
         wrapper.like(searchMap.get("name") != null && !"".equals(searchMap.get("name")),Brand::getName,searchMap.get("name"))
-                .like(searchMap.get("letter") != null && !"".equals(searchMap.get("letter")),Brand::getName,searchMap.get("letter"));
+                .eq(searchMap.get("letter") != null && !"".equals(searchMap.get("letter")),Brand::getName,searchMap.get("letter"));
         List<Brand> brandList = brandMapper.selectList(wrapper);
         return brandList;
     }
@@ -154,7 +154,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandMapper,Brand> implements 
         Page<Brand> brandPage = new Page<>(page, size);
         LambdaQueryWrapper<Brand> wrapper = new LambdaQueryWrapper<Brand>();
         wrapper.like(searchMap.get("name") != null && !"".equals(searchMap.get("name")),Brand::getName,searchMap.get("name"))
-                .like(searchMap.get("letter") != null && !"".equals(searchMap.get("letter")),Brand::getName,searchMap.get("letter"));
+                .eq(searchMap.get("letter") != null && !"".equals(searchMap.get("letter")),Brand::getName,searchMap.get("letter"));
         return brandMapper.selectPage(brandPage,wrapper);
     }
 

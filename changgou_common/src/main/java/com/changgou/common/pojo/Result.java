@@ -15,7 +15,7 @@ public class Result<T> {
         this.flag = flag;
         this.code = code;
         this.message = message;
-        this.data = (T)data;
+        this.data = (T) data;
     }
 
     public Result(boolean flag, Integer code, String message) {
@@ -28,6 +28,18 @@ public class Result<T> {
         this.flag = true;
         this.code = StatusCode.OK;
         this.message = "执行成功";
+    }
+
+    public static <T> Result<T> okResult() {
+        return new Result<>(true, StatusCode.OK, "OK", null);
+    }
+
+    public static <T> Result<T> okResult(T data) {
+        return new Result<>(true, StatusCode.OK, "OK", data);
+    }
+
+    public static <T> Result<T> errorResult(String msg) {
+        return new Result<>(false, StatusCode.ERROR, msg, null);
     }
 
     public boolean isFlag() {
